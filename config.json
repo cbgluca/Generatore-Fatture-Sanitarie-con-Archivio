@@ -1,0 +1,28 @@
+{
+  "medico": {
+    "nome": "Mario",
+    "cognome": "Rossi",
+    "qualifica": "MEDICO CHIRURGO",
+    "specializzazione": "SPECIALISTA IN OCULISTICA",
+    "indirizzo": "Via Roma, 10",
+    "cap": "00100",
+    "citta": "Roma",
+    "telefono": "+39 3333333333",
+    "codice_fiscale": "RSSMRA70A01H501Z",
+    "partita_iva": "12345678901"
+  },
+  "prestazioni_frequenti": [
+    "Prima visita oculistica",
+    "Controllo della vista",
+    "Visita oculistica con esame del fondo oculare",
+    "Tonometria",
+    "Esame del campo visivo",
+    "Topografia corneale",
+    "OCT (Tomografia a Coerenza Ottica)",
+    "Pachimetria corneale"
+  ],
+  "bollo": {
+    "soglia": 77.47,
+    "importo": 2.00
+  }
+}

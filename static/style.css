@@ -1,0 +1,1752 @@
+/* ==========================================================================
+   style.css — Stili per il Generatore di Ricevute Sanitarie
+   Layout: split-screen (form a sinistra, anteprima A4 a destra)
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Reset e variabili globali
+   -------------------------------------------------------------------------- */
+:root {
+    --primary: #1a5276;
+    --primary-light: #2980b9;
+    --primary-dark: #0e2f44;
+    --accent: #e74c3c;
+    --bg-app: #f0f2f5;
+    --bg-form: #ffffff;
+    --bg-a4: #ffffff;
+    --border: #d5d8dc;
+    --border-light: #eaecee;
+    --text: #2c3e50;
+    --text-muted: #7f8c8d;
+    --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.12);
+    --radius: 8px;
+    --font: 'Segoe UI', 'Inter', system-ui, -apple-system, sans-serif;
+    --font-mono: 'Courier New', monospace;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    font-size: 14px;
+}
+
+body {
+    font-family: var(--font);
+    background: var(--bg-app);
+    color: var(--text);
+    min-height: 100vh;
+}
+
+/* --------------------------------------------------------------------------
+   Header dell'applicazione e Toolbar in alto a sinistra
+   -------------------------------------------------------------------------- */
+.app-header {
+    background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+    color: #fff;
+    padding: 0.55rem 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    transition: background 0.3s ease;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Pulsanti toolbar header — con lo stesso font e stile delle sezioni RICEVUTA, DATI PAZIENTE ecc */
+.hdr-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.42rem 0.85rem;
+    font-family: inherit;
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-radius: 5px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.hdr-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed !important;
+    filter: grayscale(0.8);
+    pointer-events: none;
+}
+
+.hdr-btn-save {
+    background: #27ae60;
+    color: #fff;
+    border-color: #219653;
+}
+.hdr-btn-save:hover:not(:disabled) {
+    background: #219653;
+    box-shadow: 0 2px 6px rgba(39, 174, 96, 0.4);
+}
+
+.hdr-btn-cancel {
+    background: #e74c3c;
+    color: #fff;
+    border-color: #c0392b;
+    animation: fadeIn 0.2s ease-in;
+}
+.hdr-btn-cancel:hover {
+    background: #c0392b;
+    box-shadow: 0 2px 6px rgba(231, 76, 60, 0.4);
+}
+
+.hdr-btn-edit {
+    background: #f39c12;
+    color: #fff;
+    border-color: #d68910;
+}
+.hdr-btn-edit:hover:not(:disabled) {
+    background: #e67e22;
+    box-shadow: 0 2px 6px rgba(243, 156, 18, 0.4);
+}
+
+.hdr-btn-print {
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.3);
+}
+.hdr-btn-print:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.28);
+}
+
+.hdr-btn-new {
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.35);
+}
+.hdr-btn-new:hover:not(:disabled) {
+    background: #fff;
+    color: var(--primary-dark);
+}
+
+.app-header nav {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.nav-btn {
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 0.4rem 1rem;
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.nav-btn:hover {
+    background: rgba(255, 255, 255, 0.25);
+}
+
+.nav-btn.active {
+    background: #fff;
+    color: var(--primary);
+}
+
+/* ==========================================================================
+   TEMA ARANCIONE (Attivo durante la modalità Modifica Ricevuta)
+   ========================================================================== */
+body.theme-modifica-arancione .app-header {
+    background: linear-gradient(135deg, #b94a00, #e67e22) !important;
+}
+
+body.theme-modifica-arancione .form-section-header {
+    background: linear-gradient(135deg, #c0392b, #e67e22) !important;
+}
+
+body.theme-modifica-arancione .nav-btn.active {
+    color: #d35400 !important;
+}
+
+body.theme-modifica-arancione .hdr-btn-save {
+    background: #e67e22;
+    border-color: #b94a00;
+}
+body.theme-modifica-arancione .hdr-btn-save:hover:not(:disabled) {
+    background: #d35400;
+}
+
+/* ==========================================================================
+   STATO FORM BLOCCATO / DISABILITATO (Fattura salvata, non in modifica)
+   ========================================================================== */
+.form-panel.form-locked input,
+.form-panel.form-locked select,
+.form-panel.form-locked textarea,
+.form-panel.form-locked .btn-remove-row,
+.form-panel.form-locked .btn-add-row {
+    pointer-events: none !important;
+    background-color: #f1f5f9 !important;
+    color: #475569 !important;
+    cursor: not-allowed !important;
+    opacity: 0.85 !important;
+}
+
+.form-panel.form-locked .btn-remove-row,
+.form-panel.form-locked .btn-add-row {
+    opacity: 0.3 !important;
+}
+
+/* --------------------------------------------------------------------------
+   Layout principale split-screen
+   -------------------------------------------------------------------------- */
+.app-main {
+    display: flex;
+    height: calc(100vh - 48px);
+    overflow: hidden;
+}
+
+/* --------------------------------------------------------------------------
+   Pannello sinistro — Form di inserimento
+   -------------------------------------------------------------------------- */
+.form-panel {
+    width: 480px;
+    min-width: 420px;
+    background: var(--bg-form);
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* Slider / Scrollbar personalizzati ed evidenti */
+.form-panel::-webkit-scrollbar,
+.preview-panel::-webkit-scrollbar,
+.prestazioni-scroll-container::-webkit-scrollbar,
+.archivio-panel::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.form-panel::-webkit-scrollbar-track,
+.preview-panel::-webkit-scrollbar-track,
+.prestazioni-scroll-container::-webkit-scrollbar-track,
+.archivio-panel::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 4px;
+}
+
+.form-panel::-webkit-scrollbar-thumb,
+.preview-panel::-webkit-scrollbar-thumb,
+.prestazioni-scroll-container::-webkit-scrollbar-thumb,
+.archivio-panel::-webkit-scrollbar-thumb {
+    background: #94a3b8;
+    border-radius: 4px;
+}
+
+.form-panel::-webkit-scrollbar-thumb:hover,
+.preview-panel::-webkit-scrollbar-thumb:hover,
+.prestazioni-scroll-container::-webkit-scrollbar-thumb:hover,
+.archivio-panel::-webkit-scrollbar-thumb:hover {
+    background: #64748b;
+}
+
+.form-section {
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius);
+    background: #fff;
+}
+
+.form-section-header {
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: #fff;
+    padding: 0.55rem 0.85rem;
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-top-left-radius: calc(var(--radius) - 1px);
+    border-top-right-radius: calc(var(--radius) - 1px);
+}
+
+.form-section-body {
+    padding: 0.85rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+}
+
+/* Campi del form */
+.form-row {
+    display: flex;
+    gap: 0.5rem;
+    align-items: flex-end;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    flex: 1;
+    min-width: 0;
+}
+
+.form-group label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 0.45rem 0.55rem;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-family: var(--font);
+    font-size: 0.9rem;
+    color: var(--text);
+    background: #fff;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--primary-light);
+    box-shadow: 0 0 0 3px rgba(41, 128, 185, 0.12);
+}
+
+.form-group input::placeholder {
+    color: #94a3b8;
+    font-style: italic;
+}
+
+/* Campi con dimensione fissa */
+.form-group.w-auto {
+    flex: 0 0 auto;
+}
+
+.form-group.w-100 {
+    min-width: 80px;
+    max-width: 100px;
+}
+
+.form-group.w-120 {
+    min-width: 100px;
+    max-width: 120px;
+}
+
+.form-group.w-140 {
+    min-width: 125px;
+    max-width: 150px;
+}
+
+/* --------------------------------------------------------------------------
+   Righe prestazione (area dinamica espandibile naturalmente fino a 8 righe)
+   -------------------------------------------------------------------------- */
+.prestazioni-scroll-container {
+    max-height: none;
+    overflow: visible;
+}
+
+.prestazioni-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    position: relative;
+}
+
+.prestazione-row {
+    display: flex;
+    gap: 0.4rem;
+    align-items: flex-end;
+    background: #f8fafc;
+    padding: 0.45rem 0.5rem;
+    border-radius: 6px;
+    border: 1px solid #e2e8f0;
+    position: relative;
+    user-select: none;
+    transition: transform 0.22s cubic-bezier(0.2, 0, 0, 1), box-shadow 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.prestazione-row input,
+.prestazione-row select {
+    user-select: auto;
+}
+
+/* Maniglia di trascinamento slider: visibile ed attiva SOLO in modalità modifica */
+.drag-handle {
+    flex: 0 0 24px;
+    height: 32px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    cursor: grab;
+    color: #94a3b8;
+    border-radius: 4px;
+    transition: all 0.15s ease;
+    user-select: none;
+    touch-action: none;
+    margin-bottom: 1px;
+    background: transparent;
+}
+
+.prestazioni-list.can-drag .drag-handle {
+    display: flex;
+}
+
+.prestazioni-list.no-drag .drag-handle {
+    display: none !important;
+}
+
+.drag-handle:hover {
+    color: var(--primary);
+    background: #e2e8f0;
+}
+
+body.theme-modifica-arancione .drag-handle:hover {
+    color: #d97706;
+    background: #fef3c7;
+}
+
+.drag-handle:active {
+    cursor: grabbing;
+}
+
+/* Stato durante il trascinamento/sliding */
+.prestazione-row.is-dragging {
+    z-index: 1000 !important;
+    background: #ffffff !important;
+    border-color: #3b82f6 !important;
+    box-shadow: 0 12px 24px -4px rgba(0, 0, 0, 0.18), 0 4px 8px -2px rgba(0, 0, 0, 0.08) !important;
+    cursor: grabbing !important;
+    transition: none !important;
+}
+
+.prestazioni-list.is-sorting {
+    user-select: none;
+}
+
+.prestazione-row .form-group.form-group-desc,
+.prestazione-row .form-group:not(.form-group-imp) {
+    flex: 1;
+    min-width: 0;
+}
+
+.prestazione-row select {
+    width: 100%;
+    text-overflow: ellipsis;
+}
+
+.prestazione-row .form-group.form-group-imp {
+    flex: 0 0 95px;
+}
+
+.btn-remove-row {
+    flex: 0 0 28px;
+    height: 32px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+    margin-bottom: 1px;
+}
+
+.btn-remove-row:hover {
+    background: #c0392b;
+}
+
+.btn-add-row {
+    align-self: flex-start;
+    background: #f8fafc;
+    color: var(--primary-light);
+    border: 1px dashed var(--primary-light);
+    padding: 0.45rem 0.85rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.82rem;
+    font-weight: 600;
+    transition: all 0.2s;
+    margin-top: 0.35rem;
+}
+
+.btn-add-row:hover:not(:disabled) {
+    background: rgba(41, 128, 185, 0.1);
+    border-style: solid;
+}
+
+.btn-add-row:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    border-color: #cbd5e1;
+    color: #94a3b8;
+}
+
+.prestazioni-max-alert {
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    color: #92400e;
+    font-size: 0.76rem;
+    font-weight: 600;
+    padding: 0.4rem 0.6rem;
+    border-radius: 4px;
+    margin-top: 0.3rem;
+}
+
+/* --------------------------------------------------------------------------
+   Sezione bollo e totali nel form
+   -------------------------------------------------------------------------- */
+.totali-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.3rem 0;
+    font-size: 0.9rem;
+}
+
+.totali-row.totale-finale {
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: var(--primary);
+    border-top: 2px solid var(--primary);
+    padding-top: 0.5rem;
+    margin-top: 0.3rem;
+}
+
+.checkbox-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+}
+
+.checkbox-row input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--primary);
+}
+
+/* --------------------------------------------------------------------------
+   Pulsanti azioni form
+   -------------------------------------------------------------------------- */
+.form-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.btn {
+    padding: 0.6rem 1.2rem;
+    border: none;
+    border-radius: var(--radius);
+    font-family: var(--font);
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: #fff;
+    flex: 1;
+}
+
+.btn-primary:hover {
+    box-shadow: 0 4px 12px rgba(26, 82, 118, 0.3);
+    transform: translateY(-1px);
+}
+
+.btn-secondary {
+    background: #ecf0f1;
+    color: var(--text);
+}
+
+.btn-secondary:hover {
+    background: #d5dbdb;
+}
+
+.btn-print {
+    background: linear-gradient(135deg, #27ae60, #2ecc71);
+    color: #fff;
+}
+
+.btn-print:hover {
+    box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
+    transform: translateY(-1px);
+}
+
+/* --------------------------------------------------------------------------
+   Pannello destro — Anteprima A4
+   -------------------------------------------------------------------------- */
+.preview-panel {
+    flex: 1;
+    background: #e8eaed;
+    overflow-y: auto;
+    display: flex;
+    justify-content: center;
+    padding: 1.5rem;
+}
+
+/* --------------------------------------------------------------------------
+   Foglio A4 — Replica fedele del modulo Buffetti
+   -------------------------------------------------------------------------- */
+.a4-sheet {
+    width: 210mm;
+    min-height: 297mm;
+    background: var(--bg-a4);
+    box-shadow: var(--shadow-lg);
+    padding: 15mm 18mm 20mm 18mm;
+    font-family: 'Times New Roman', 'Georgia', serif;
+    font-size: 10pt;
+    color: #1a1a1a;
+    line-height: 1.4;
+    position: relative;
+    flex-shrink: 0;
+}
+
+/* --- Intestazione: timbro medico (sx) + numero ricevuta (dx) --- */
+.a4-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8mm;
+    padding-bottom: 4mm;
+    border-bottom: 1.5pt solid #1a1a1a;
+}
+
+.a4-timbro {
+    max-width: 55%;
+}
+
+.a4-timbro .medico-nome {
+    font-size: 13pt;
+    font-weight: 700;
+    margin-bottom: 1mm;
+}
+
+.a4-timbro .medico-qualifica {
+    font-size: 9pt;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.a4-timbro .medico-specializzazione {
+    font-size: 9pt;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 2mm;
+}
+
+.a4-timbro .medico-dettaglio {
+    font-size: 8.5pt;
+    line-height: 1.5;
+    color: #333;
+}
+
+.a4-ricevuta-box {
+    text-align: right;
+}
+
+.a4-ricevuta-titolo {
+    font-size: 15pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.a4-ricevuta-numero {
+    font-size: 22pt;
+    font-weight: 700;
+    color: var(--primary);
+    font-family: var(--font-mono);
+    margin: 1mm 0;
+}
+
+.a4-data-box {
+    margin-top: 2mm;
+    font-size: 9.5pt;
+}
+
+.a4-data-box .label {
+    font-weight: 600;
+}
+
+.a4-data-box .value {
+    font-family: var(--font-mono);
+    border-bottom: 1px solid #999;
+    padding: 0 3mm;
+    min-width: 25mm;
+    display: inline-block;
+}
+
+/* --- Anagrafica paziente --- */
+.a4-paziente {
+    margin-bottom: 6mm;
+    padding: 3mm 4mm;
+    border: 1px solid #999;
+}
+
+.a4-paziente-row {
+    display: flex;
+    gap: 3mm;
+    margin-bottom: 2mm;
+    font-size: 9.5pt;
+    align-items: baseline;
+}
+
+.a4-paziente-row:last-child {
+    margin-bottom: 0;
+}
+
+.a4-paziente-row .label {
+    font-weight: 600;
+    white-space: nowrap;
+    min-width: 15mm;
+}
+
+.a4-paziente-row .value {
+    flex: 1;
+    border-bottom: 0.5pt dotted #999;
+    min-height: 1.2em;
+    padding: 0 1mm;
+    font-family: var(--font-mono);
+    font-size: 9pt;
+    word-break: break-all;
+}
+
+.a4-cf-box {
+    display: flex;
+    gap: 4mm;
+    margin-top: 2mm;
+}
+
+.a4-cf-box .cf-group {
+    display: flex;
+    align-items: baseline;
+    gap: 2mm;
+}
+
+.a4-cf-box .cf-group .label {
+    font-weight: 600;
+    font-size: 8.5pt;
+    white-space: nowrap;
+}
+
+.a4-cf-box .cf-group .value {
+    font-family: var(--font-mono);
+    font-size: 9pt;
+    letter-spacing: 0.1em;
+    border: 0.5pt solid #999;
+    padding: 0.5mm 2mm;
+    min-width: 42mm;
+    background: #fafafa;
+}
+
+.a4-cf-box .cf-group .value.piva {
+    min-width: 30mm;
+}
+
+/* --- Tabella prestazioni --- */
+.a4-prestazioni-titolo {
+    font-size: 8.5pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    text-align: center;
+    padding: 2mm 0;
+    border: 1px solid #1a1a1a;
+    border-bottom: none;
+    background: #f5f5f5;
+    letter-spacing: 0.05em;
+}
+
+.a4-prestazioni-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 4mm;
+}
+
+.a4-prestazioni-table thead th {
+    font-size: 8pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 2mm 3mm;
+    border: 1px solid #1a1a1a;
+    background: #f0f0f0;
+    text-align: left;
+}
+
+.a4-prestazioni-table thead th:last-child {
+    text-align: right;
+    width: 28mm;
+}
+
+.a4-prestazioni-table tbody td {
+    padding: 2mm 3mm;
+    border-left: 1px solid #1a1a1a;
+    border-right: 1px solid #1a1a1a;
+    border-bottom: 0.5pt dotted #ccc;
+    font-size: 9.5pt;
+    min-height: 6mm;
+    vertical-align: top;
+}
+
+.a4-prestazioni-table tbody tr:last-child td {
+    border-bottom: 1px solid #1a1a1a;
+}
+
+.a4-prestazioni-table tbody td:last-child {
+    text-align: right;
+    font-family: var(--font-mono);
+    white-space: nowrap;
+}
+
+/* Righe vuote per dare l'aspetto del modulo cartaceo */
+.a4-prestazioni-table tbody tr.empty-row td {
+    height: 7mm;
+    border-bottom: 0.5pt dotted #ccc;
+}
+
+.a4-prestazioni-table tbody tr.empty-row:last-child td {
+    border-bottom: 1px solid #1a1a1a;
+}
+
+/* --- Area inferiore: bollo (sx) + totali (dx) --- */
+.a4-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-top: 4mm;
+}
+
+.a4-bollo-area {
+    width: 48%;
+}
+
+.a4-bollo-box {
+    border: 1.5pt dashed #999;
+    width: 42mm;
+    height: 42mm;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 7.5pt;
+    color: #999;
+    text-transform: uppercase;
+    text-align: center;
+    gap: 1mm;
+}
+
+.a4-bollo-box .bollo-label {
+    font-weight: 700;
+    font-size: 8pt;
+}
+
+.a4-bollo-box .bollo-importo {
+    font-size: 10pt;
+    font-weight: 700;
+    color: #555;
+}
+
+.a4-firma {
+    margin-top: 10mm;
+    font-size: 8.5pt;
+}
+
+.a4-firma-line {
+    border-top: 0.5pt solid #1a1a1a;
+    width: 60mm;
+    margin-top: 15mm;
+    padding-top: 1mm;
+    text-align: center;
+    font-size: 8pt;
+    font-style: italic;
+}
+
+/* --- Totali (dx) --- */
+.a4-totali-area {
+    width: 45%;
+}
+
+.a4-totali-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.a4-totali-table td {
+    padding: 1.5mm 3mm;
+    font-size: 9.5pt;
+}
+
+.a4-totali-table td:first-child {
+    text-align: right;
+    font-weight: 600;
+    padding-right: 4mm;
+}
+
+.a4-totali-table td:last-child {
+    text-align: right;
+    font-family: var(--font-mono);
+    border-bottom: 0.5pt solid #999;
+    min-width: 25mm;
+}
+
+.a4-totali-table tr.totale-finale td {
+    font-size: 12pt;
+    font-weight: 700;
+    border: 2pt solid #1a1a1a;
+    padding: 2mm 3mm;
+    background: #f5f5f5;
+}
+
+.a4-totali-table tr.totale-finale td:first-child {
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Metodo pagamento */
+.a4-pagamento {
+    margin-top: 4mm;
+    font-size: 8.5pt;
+    text-align: right;
+}
+
+.a4-pagamento .label {
+    font-weight: 600;
+}
+
+/* --- Note legali a fondo pagina --- */
+.a4-note-legali {
+    position: absolute;
+    bottom: 12mm;
+    left: 18mm;
+    right: 18mm;
+    font-size: 6.5pt;
+    color: #666;
+    line-height: 1.4;
+    text-align: justify;
+    border-top: 0.5pt solid #ccc;
+    padding-top: 2mm;
+}
+
+/* --------------------------------------------------------------------------
+   Banner modalità modifica (nel Form Panel)
+   -------------------------------------------------------------------------- */
+.modifica-banner {
+    background: #fff8e1;
+    border: 1px solid #ffe082;
+    border-left: 4px solid #f39c12;
+    border-radius: var(--radius);
+    padding: 0.6rem 0.8rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+    color: #795548;
+    animation: fadeIn 0.25s ease-in;
+}
+
+.modifica-info {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.modifica-icon {
+    font-size: 1rem;
+}
+
+.btn-annulla-modifica {
+    background: #fff;
+    border: 1px solid #d7ccc8;
+    color: #5d4037;
+    padding: 0.25rem 0.6rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.75rem;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.btn-annulla-modifica:hover {
+    background: #efebe9;
+    border-color: #bcaaa4;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* --------------------------------------------------------------------------
+   Vista Archivio (layout professionale a tutta larghezza)
+   -------------------------------------------------------------------------- */
+.archivio-panel {
+    display: none;
+    flex: 1;
+    padding: 2rem;
+    overflow-y: auto;
+    background: var(--bg-app);
+}
+
+.archivio-panel.visible {
+    display: block;
+}
+
+.archivio-container {
+    max-width: 1280px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.archivio-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fff;
+    padding: 1.25rem 1.5rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--border-light);
+    box-shadow: var(--shadow);
+}
+
+.archivio-title-block h2 {
+    font-size: 1.35rem;
+    color: var(--primary-dark);
+    font-weight: 700;
+}
+
+.archivio-subtitle {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-top: 0.2rem;
+}
+
+.btn-export-csv {
+    background: linear-gradient(135deg, #27ae60, #2ecc71);
+    color: #fff;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: var(--radius);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.btn-export-csv:hover {
+    box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
+    transform: translateY(-1px);
+}
+
+/* Filtri archivio */
+.archivio-filters-card {
+    background: #fff;
+    padding: 1rem 1.25rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--border-light);
+    box-shadow: var(--shadow);
+}
+
+.filters-row {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-end;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.filter-group label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+}
+
+.filter-group select,
+.filter-group input {
+    padding: 0.45rem 0.65rem;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-size: 0.9rem;
+    color: var(--text);
+    background: #fff;
+    height: 36px;
+}
+
+.filter-group select {
+    min-width: 140px;
+}
+
+.filter-group.filter-search {
+    flex: 1;
+}
+
+.filter-buttons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.filter-buttons .btn {
+    height: 36px;
+    padding: 0 1rem;
+}
+
+/* Tabella archivio */
+.archivio-table-card {
+    background: #fff;
+    border-radius: var(--radius);
+    border: 1px solid var(--border-light);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+}
+
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.archivio-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.archivio-table thead th {
+    background: #f8fafc;
+    color: #475569;
+    font-weight: 600;
+    text-align: left;
+    padding: 0.75rem 1rem;
+    border-bottom: 2px solid var(--border-light);
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+}
+
+.archivio-table tbody tr {
+    border-bottom: 1px solid var(--border-light);
+    transition: background 0.15s;
+}
+
+.archivio-table tbody tr:hover {
+    background: #f8fafc;
+}
+
+.archivio-table tbody td {
+    padding: 0.75rem 1rem;
+    color: var(--text);
+    vertical-align: middle;
+}
+
+.ricevuta-badge {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    color: var(--primary);
+    background: rgba(41, 128, 185, 0.1);
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    display: inline-block;
+}
+
+.cf-mono {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+    color: #475569;
+}
+
+.totale-highlight {
+    font-weight: 700;
+    color: #1e293b;
+    font-family: var(--font-mono);
+}
+
+/* Badge metodo pagamento */
+.badge-pagamento {
+    display: inline-block;
+    padding: 0.2rem 0.55rem;
+    border-radius: 12px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.badge-pos {
+    background: #e0f2fe;
+    color: #0369a1;
+}
+
+.badge-contanti {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.badge-bonifico {
+    background: #ede9fe;
+    color: #6d28d9;
+}
+
+.badge-nessuno {
+    color: #94a3b8;
+    font-style: italic;
+}
+
+/* Pulsanti Azione Tabella */
+.actions-cell {
+    display: flex;
+    gap: 0.35rem;
+    justify-content: center;
+}
+
+.btn-action {
+    padding: 0.35rem 0.65rem;
+    border-radius: 4px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.15s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    white-space: nowrap;
+}
+
+.btn-action-view {
+    background: #e2e8f0;
+    color: #334155;
+}
+
+.btn-action-view:hover {
+    background: #cbd5e1;
+    color: #0f172a;
+}
+
+.btn-action-edit {
+    background: #e0f2fe;
+    color: #0284c7;
+}
+
+.btn-action-edit:hover {
+    background: #bae6fd;
+    color: #0369a1;
+}
+
+.btn-action-delete {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.btn-action-delete:hover {
+    background: #fecaca;
+    color: #b91c1c;
+}
+
+/* Stato vuoto */
+.archivio-empty {
+    text-align: center;
+    padding: 3.5rem 1.5rem;
+    color: var(--text-muted);
+}
+
+.empty-icon {
+    font-size: 3rem;
+    margin-bottom: 0.75rem;
+    opacity: 0.7;
+}
+
+.archivio-empty h3 {
+    font-size: 1.15rem;
+    color: var(--text);
+    margin-bottom: 0.3rem;
+}
+
+/* --------------------------------------------------------------------------
+   Notifica / Toast
+   -------------------------------------------------------------------------- */
+.toast {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    background: var(--primary);
+    color: #fff;
+    padding: 0.75rem 1.25rem;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lg);
+    font-size: 0.9rem;
+    font-weight: 500;
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all 0.3s ease;
+    z-index: 1000;
+}
+
+.toast.show {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.toast.error {
+    background: var(--accent);
+}
+
+.toast.success {
+    background: #27ae60;
+}
+
+/* --------------------------------------------------------------------------
+   Modal di conferma eliminazione
+   -------------------------------------------------------------------------- */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    animation: fadeIn 0.2s ease-out;
+}
+
+.modal-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 2rem;
+    max-width: 440px;
+    width: 90%;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    animation: modalScale 0.2s ease-out;
+}
+
+@keyframes modalScale {
+    from { transform: scale(0.92); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+.modal-icon-danger {
+    width: 56px;
+    height: 56px;
+    background: #fee2e2;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.75rem;
+    margin: 0 auto 1rem;
+}
+
+.modal-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 0.5rem;
+}
+
+.modal-message {
+    font-size: 0.92rem;
+    color: #64748b;
+    line-height: 1.5;
+    margin-bottom: 1.5rem;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+}
+
+.modal-actions .btn {
+    flex: 1;
+    justify-content: center;
+}
+
+.btn-danger {
+    background: #dc2626;
+    color: #fff;
+    border: none;
+}
+
+.btn-danger:hover {
+    background: #b91c1c;
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+}
+
+.btn-success {
+    background: #16a34a;
+    color: #fff;
+    border: none;
+}
+
+.btn-success:hover {
+    background: #15803d;
+    box-shadow: 0 4px 12px rgba(22, 163, 74, 0.3);
+}
+
+.modal-icon-warning {
+    width: 56px;
+    height: 56px;
+    background: #fef3c7;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.75rem;
+    margin: 0 auto 1rem;
+    color: #d97706;
+}
+
+/* Pulsante ed elementi modale Excel */
+.btn-export-excel {
+    background: #1e7e34;
+    color: #fff;
+    border: 1px solid #19692c;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-export-excel:hover {
+    background: #19692c;
+    box-shadow: 0 3px 8px rgba(30, 126, 52, 0.35);
+}
+
+.modal-icon-excel {
+    width: 56px;
+    height: 56px;
+    background: #e8f5e9;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.75rem;
+    margin: 0 auto 1rem;
+    color: #1e7e34;
+}
+
+.modal-form-years-wrapper {
+    margin-bottom: 1.1rem;
+    text-align: left;
+}
+
+.modal-form-years-label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.45rem;
+}
+
+.modal-form-years {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.btn-year-badge {
+    background: #f1f5f9;
+    color: var(--text, #1e293b);
+    border: 1px solid #cbd5e1;
+    padding: 0.35rem 0.85rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    user-select: none;
+}
+
+.btn-year-badge:hover {
+    background: #e2e8f0;
+    border-color: #94a3b8;
+    transform: translateY(-1px);
+}
+
+.btn-year-badge.active {
+    background: #1e7e34;
+    color: #ffffff;
+    border-color: #19692c;
+    box-shadow: 0 2px 6px rgba(30, 126, 52, 0.35);
+}
+
+.modal-form-date-range {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    text-align: left;
+}
+
+.modal-form-date-range .form-group {
+    flex: 1;
+}
+
+/* --------------------------------------------------------------------------
+   Responsive: schermi piccoli -> form sopra, preview sotto
+   -------------------------------------------------------------------------- */
+@media (max-width: 900px) {
+    .app-main {
+        flex-direction: column;
+        height: auto;
+    }
+
+    .form-panel {
+        width: 100%;
+        min-width: unset;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        max-height: 50vh;
+    }
+
+    .preview-panel {
+        min-height: 60vh;
+    }
+
+    .a4-sheet {
+        width: 100%;
+        min-height: auto;
+        padding: 8mm;
+        font-size: 8pt;
+    }
+}
+
+/* ==========================================================================
+   STILI DI STAMPA — @media print
+   Calibrato per foglio A4 (210 × 297 mm) singola pagina senza sbordare.
+   ========================================================================== */
+
+/* Impostazione pagina A4 con margini minimi (i margini sono nel padding del foglio) */
+@page {
+    size: A4 portrait;
+    margin: 0;
+}
+
+@media print {
+
+    /* --- Reset globale per la stampa --- */
+    *,
+    *::before,
+    *::after {
+        box-shadow: none !important;
+        text-shadow: none !important;
+    }
+
+    html, body {
+        width: 210mm;
+        height: 297mm;
+        margin: 0 !important;
+        padding: 0 !important;
+        background: #fff !important;
+        overflow: hidden !important;
+        font-size: 10pt;
+    }
+
+    /* --- Nascondi TUTTO tranne il foglio A4 --- */
+    .app-header,
+    .form-panel,
+    .archivio-panel,
+    .toast,
+    .form-actions,
+    .nav-btn,
+    #view-archivio {
+        display: none !important;
+    }
+
+    /* --- Il contenitore principale diventa un semplice wrapper --- */
+    .app-main {
+        display: block !important;
+        height: auto !important;
+        overflow: visible !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    .preview-panel {
+        display: block !important;
+        background: #fff !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        overflow: visible !important;
+        width: 210mm !important;
+        height: 297mm !important;
+    }
+
+    /* --- Foglio A4: occupa esattamente una pagina --- */
+    .a4-sheet {
+        width: 210mm !important;
+        min-height: 297mm !important;
+        max-height: 297mm !important;
+        height: 297mm !important;
+        margin: 0 !important;
+        padding: 15mm 18mm 20mm 18mm !important;
+        border: none !important;
+        box-shadow: none !important;
+        background: #fff !important;
+        position: relative !important;
+        overflow: hidden !important;
+
+        /* Impedisce interruzione di pagina interna */
+        page-break-inside: avoid;
+        break-inside: avoid;
+        page-break-after: avoid;
+        break-after: avoid;
+    }
+
+    /* --- Forza la stampa dei colori di sfondo e bordi --- */
+    .a4-sheet,
+    .a4-sheet * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
+    }
+
+    /* --- Intestazione medico --- */
+    .a4-header {
+        border-bottom: 1.5pt solid #000 !important;
+    }
+
+    .a4-timbro .medico-nome {
+        font-size: 13pt !important;
+    }
+
+    .a4-timbro .medico-qualifica,
+    .a4-timbro .medico-specializzazione {
+        font-size: 9pt !important;
+    }
+
+    .a4-timbro .medico-dettaglio {
+        font-size: 8.5pt !important;
+        color: #000 !important;
+    }
+
+    /* --- Numero ricevuta --- */
+    .a4-ricevuta-numero {
+        color: #000 !important;
+        font-size: 22pt !important;
+    }
+
+    /* --- Anagrafica paziente --- */
+    .a4-paziente {
+        border: 1px solid #000 !important;
+    }
+
+    .a4-cf-box .cf-group .value {
+        border: 0.5pt solid #000 !important;
+        background: #fff !important;
+    }
+
+    /* --- Tabella prestazioni --- */
+    .a4-prestazioni-titolo {
+        border: 1px solid #000 !important;
+        background: #f0f0f0 !important;
+    }
+
+    .a4-prestazioni-table thead th {
+        border: 1px solid #000 !important;
+        background: #f0f0f0 !important;
+    }
+
+    .a4-prestazioni-table tbody td {
+        border-left: 1px solid #000 !important;
+        border-right: 1px solid #000 !important;
+    }
+
+    .a4-prestazioni-table tbody tr:last-child td {
+        border-bottom: 1px solid #000 !important;
+    }
+
+    /* --- Bollo --- */
+    .a4-bollo-box {
+        border: 1.5pt dashed #666 !important;
+    }
+
+    .a4-firma-line {
+        border-top: 0.5pt solid #000 !important;
+    }
+
+    /* --- Totali --- */
+    .a4-totali-table tr.totale-finale td {
+        border: 2pt solid #000 !important;
+        background: #f5f5f5 !important;
+    }
+
+    /* --- Note legali --- */
+    .a4-note-legali {
+        color: #333 !important;
+        border-top: 0.5pt solid #999 !important;
+        position: absolute !important;
+        bottom: 12mm !important;
+    }
+
+    /* --- Impedisci link e decorazioni aggiuntive del browser --- */
+    a, a:visited {
+        text-decoration: none !important;
+        color: inherit !important;
+    }
+
+    /* --- Nascondi URL del browser nei header/footer di pagina
+         (controllato dal browser, ma rimuoviamo il padding per evitare conflitti) --- */
+    @page {
+        margin: 0 !important;
+    }
+}
